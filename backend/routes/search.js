@@ -1,55 +1,56 @@
-const router = require('express').Router();
-const Search = require('../models.mongoose/search.model');
-var request = require('request');
+const router = require("express").Router();
+const Search = require("../models.mongoose/search.model");
 
-const api = require('../helpers/api');
+const api = require("../helpers/api");
 
-router.get('/:id', function(req, res, next) {
-    //if req.params.id
-    Search.findOne({movieId: { $eq: req.params.id }})
-    .then(async (search) => {
-        if(search && search.movieName) {
-            responseObject = {
-                movieId: req.params.id,
-                movieName: search.movieName
-            }
-            res.json(responseObject);
-            //console.log("retrieving locally: " + search.movieName)
-        } else {
-            try {
-                //console.log("retrieving remotely")
-                response = await api.getMovieName(req.params.id);
-                responseObject = {
-                    movieId: req.params.id,
-                    movieName: response.data.title
-                }
-                const newSearch = new Search(responseObject);
-                newSearch.save()
-                    .then(() => res.json(responseObject))
-                    .catch(err => res.status(400).json('Error: ' + err));
-                } catch(err) {
-                console.log("Error: " + err);
-                res.status(400).json('Error: ' + err)
-            }    
-        }
-    })
-    .catch(err => {
-        console.log("Error: " + err);
-        res.status(400).json('Error: ' + err)
-    });  
-  });
+router.get("/", function(req, res, next) {
+  searchString = req.query.searchString;
+  page = Number(req.query.page) || 1;
 
-  router.route('/add').post((req, res) => {
-    const movieId = req.body.movieId;
-    const movieName = req.body.movieName;
-
-    const newSearch = new Search({movieId, movieName});
-
-    newSearch.save()
-        .then(() => res.json('Search added!'))
-        .catch(err => res.status(400).json('Error: ' + err));
+  if (searchString && page && page >= 1 && page < 100) {
+    api.searchPerson(searchString, page)
+      .then(response => {
+        res.json(response);
+      })
+      .catch(error => {
+        res.status(400).json("Error: " + error);
+      });
+  } else {
+    res.status(400).json("Error: invalid request");
+  }
 });
 
+router.get("/:id", function(req, res, next) {
+  //if req.params.id
+  Search.findOne({ movieId: { $eq: req.params.id } })
+    .then(search => {
+      if (search && search.movieName) {
+        responseObject = {
+          movieId: req.params.id,
+          movieName: search.movieName
+        };
+        res.json(responseObject);
+        console.log("retrieving locally: " + search.movieName);
+      } else {
+        try {
+          console.log("retrieving remotely");
+          api.getMovieName(req.params.id).then(response => {
+            const newSearch = new Search(response);
+            newSearch
+              .save()
+              .then(() => res.json(responseObject))
+              .catch(err => res.status(400).json("Error: " + err));
+          });
+        } catch (err) {
+          console.log("Error: " + err);
+          res.status(400).json("Error: " + err);
+        }
+      }
+    })
+    .catch(err => {
+      console.log("Error: " + err);
+      res.status(400).json("Error: " + err);
+    });
+});
 
 module.exports = router;
-
