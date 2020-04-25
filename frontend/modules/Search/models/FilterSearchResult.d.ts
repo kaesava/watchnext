@@ -1,5 +1,5 @@
 
-export default interface LiveSearchResult {
+export default interface FilterSearchResult {
     tId: number,
     name: string,
     popularity: number,

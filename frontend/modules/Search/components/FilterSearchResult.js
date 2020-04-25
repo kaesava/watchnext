@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { StyleSheet, Text, TouchableHighlight, View, Image } from 'react-native';
 
 const TMMDB_PREFIX = "http://image.tmdb.org/t/p/w92/"
 
-export default LiveSearchResult = (props) => {
-    const { result, touchAction } = props;
+export default FilterSearchResult = (props) => {
+    const {result, touchAction} = props;
 
     const fixKnownFor = ( knownFor ) => {
+        if(!knownFor) {
+            return ""
+        }
         switch(knownFor) {
             case "Acting": return " (Actor)"
             case "Directing": return " (Director)"
