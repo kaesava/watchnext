@@ -14,10 +14,11 @@ const initialFilterSearchState = {
     discoverRetrieveInProgress: false,
     discoverSearchResults: [],
     discoverSearchError: '',
+    selectedMovieTId: undefined
 }
 import {ActionTypes} from './actions';
 
-export const filterSearchReducer = (state = initialFilterSearchState, action) => {
+export default filterSearchReducer = (state = initialFilterSearchState, action) => {
     var returnState = state;
     switch (action.type) {
         case ActionTypes.FILTER_SEARCH_STRING_CHANGED:
@@ -48,6 +49,9 @@ export const filterSearchReducer = (state = initialFilterSearchState, action) =>
             const newFilters = arrayRemoveAllWithKey(state.filters, action.payload)
             returnState = {...state, filters: newFilters, discoverSearchResults: [], discoverSearchError: ''}
             break;
+        case ActionTypes.DISCOVER_SEARCH_PAGE_CHANGED:
+            returnState = {... state, discoverSearchPage: action.payload, discoverSearchResults: []}
+            break;
         case ActionTypes.DISCOVER_SEARCH_STARTED: 
             returnState = { ...state, discoverRetrieveInProgress: true, discoverSearchError: '' };
             break;
@@ -56,6 +60,9 @@ export const filterSearchReducer = (state = initialFilterSearchState, action) =>
             break;
         case ActionTypes.DISCOVER_SEARCH_FAILED:
             returnState = {...state, discoverRetrieveInProgress: false, discoverSearchResults: [], discoverSearchError: action.payload}
+            break;
+        case ActionTypes.MOVIE_SELECTED:
+            returnState = {...state, selectedMovieTId: action.payload}
             break;
         default:
             returnState = state;

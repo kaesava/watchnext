@@ -1,9 +1,6 @@
 const axios = require('axios');
 
-const API_URI = "https://api.themoviedb.org/3"
-const API_SEARCH_PERSON = "/search/person"
-const API_DISCOVER_MOVIE = "/discover/movie"
-const API_GENRE_MOVIE = "/genre/movie/list"
+
 const Constants = require("../helpers/constants");
 
 const STD_PARAMS = {
@@ -15,7 +12,7 @@ const STD_PARAMS = {
 module.exports = {
 
     refreshGenresFromAPI: () =>  {
-        return axios.get(API_URI + API_GENRE_MOVIE,
+        return axios.get(Constants.API_URI + Constants.API_GENRE_MOVIE,
             {
                 params: {...STD_PARAMS, 
                 }
@@ -26,6 +23,7 @@ module.exports = {
             newGenres = [];
             genres.forEach(genre => {
                 newGenres.push({
+                    key: Constants.FILTER_TYPE_GENRE + "." + genre.id,
                     tId: genre.id,
                     name: genre.name
                 });
@@ -43,7 +41,7 @@ module.exports = {
             if(!page) { page = 1;}
             if(!filterSearchString || filterSearchString === "") { throw("Empty filter search");}
 
-            return axios.get(API_URI + API_SEARCH_PERSON,
+            return axios.get(Constants.API_URI + Constants.API_SEARCH_PERSON,
                 {
                     params: {...STD_PARAMS, 
                         query: encodeURI(filterSearchString),
@@ -56,6 +54,7 @@ module.exports = {
                 newResults = [];
                 results.forEach(result => {
                     newResults.push({
+                        key: filterType + "." + result.id,
                         type: filterType,
                         tId: result.id,
                         name: result.name,
@@ -74,12 +73,11 @@ module.exports = {
     },
 
     discoverSearch: (personIds, genreIds, page) => {
-        console.log("personIds: " + personIds + "; genreIds: " + genreIds + "; page: " + page, )
         if(!page) { page = 1;}
         const apiParams = {...STD_PARAMS, page: page};
         if(personIds) apiParams.with_people = encodeURI(personIds);
         if(genreIds) apiParams.with_genres = encodeURI(genreIds);
-        return axios.get(API_URI + API_DISCOVER_MOVIE,
+        return axios.get(Constants.API_URI + Constants.API_DISCOVER_MOVIE,
             {
                 params: apiParams
             }
@@ -89,7 +87,8 @@ module.exports = {
             newResults = [];
             results.forEach(result => {
                 newResults.push({
-                    type: "movie",
+                    key: Constants.DISCOVER_TYPE_MOVIE + "." + result.id,
+                    type: Constants.DISCOVER_TYPE_MOVIE,
                     tId: result.id,
                     title: result.title,
                     popularity: result.popularity,
@@ -102,6 +101,46 @@ module.exports = {
           .catch(error => {
             console.error(error);
           });  
+    },
+
+    getMovieDetails : (tId) => {
+
+        const apiParams = {...STD_PARAMS};
+        return axios.get(Constants.API_URI + Constants.API_MOVIE_DETAILS + "/" + tId,
+            {
+                params: apiParams
+            }
+        )
+        .then(response => {
+            result = response.data;
+            if(result && result.id) {
+                return {
+                    key: Constants.DISCOVER_TYPE_MOVIE + "." + result.id,
+                    tId: result.id,
+                    title: result.title,
+                    tagline: result.tagline,
+                    overview: result.overview,
+                    originalTitle: result.original_title,
+                    originalLanguage: result.original_language,
+                    voteAverage: Number(result.vote_average),
+                    voteCount: Number(result.vote_count),
+                    backdropPath: result.backdrop_path,
+                    posterPath: result.poster_path,
+                    releaseDate: Date(result.release_date),
+                    revenue: Number(result.revenue),
+                    runTime: Number(result.runtime),
+                }
+            } else {
+                throw "Invalid Movie Id"
+            }
+          })
+          .catch(error => {
+            console.error(error);
+            throw error
+          });  
+
+
+        
     }
 }
 

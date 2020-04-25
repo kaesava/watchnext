@@ -1,17 +1,13 @@
 const axios = require('axios');
 
-const API_URI = "http://192.168.0.64:5000"
-const API_SEARCH = "/search/filter"
-const API_DISCOVER = "/search/discover"
 const Constants = require("../../helpers/constants");
-
 
 module.exports = {
     filterSearch: (filterType, searchString, page) => {
         switch(filterType) {
         case Constants.FILTER_TYPE_GENRE:
         case Constants.FILTER_TYPE_PERSON:
-            return axios.get(API_URI + API_SEARCH,
+            return axios.get(Constants.API_URI + Constants.API_SEARCH,
             {
                 params: {
                 filterType: filterType,
@@ -20,9 +16,6 @@ module.exports = {
                 }
             })
             .then(response => {
-                response.data.map(response => {
-                    response.key = response.type + "." + response.tId;
-                })
                 return response.data;
             })
             .catch(error => {
@@ -38,7 +31,7 @@ module.exports = {
         if(personIds && personIds.length > 0) filterParams.personIds = personIds.join();
         if(genreIds && genreIds.length > 0) filterParams.genreIds = genreIds.join();
 
-        return axios.get(API_URI + API_DISCOVER,
+        return axios.get(Constants.API_URI + Constants.API_DISCOVER,
         {
             params: filterParams
         })

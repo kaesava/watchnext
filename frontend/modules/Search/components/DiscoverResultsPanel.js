@@ -24,7 +24,7 @@ const DiscoverResult = (props) => {
     const { result, touchAction } = props;
     
     return (
-        <TouchableHighlight style={styles.resultContainer} onPress={() => touchAction(result)}>
+        <TouchableHighlight style={styles.resultContainer} onPress={() => touchAction(result.tId)}>
             <>
             <View style={styles.imageContainer}>
             {// result.title, result.popularity, result.voteCount, result.posterPath, result.tId

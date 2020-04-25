@@ -10,12 +10,12 @@ export const ActionTypes = {
     FILTER_SEARCH_PAGE_CHANGED: 'FILTER_SEARCH_PAGE_CHANGED',
     FILTER_ADDED: 'FILTER_ADDED',
     FILTER_REMOVED: 'FILTER_REMOVED',
+    DISCOVER_SEARCH_PAGE_CHANGED: 'DISCOVER_SEARCH_PAGE_CHANGED',
     DISCOVER_SEARCH_STARTED: 'DISCOVER_SEARCH_STARTED',
     DISCOVER_SEARCH_RETRIEVED: 'DISCOVER_SEARCH_RETRIEVED',
     DISCOVER_SEARCH_FAILED: 'DISCOVER_SEARCH_FAILED',
+    MOVIE_SELECTED: 'MOVIE_SELECTED',
 }
-
-const API_NETWORK_ERROR_MSG = "Network error - please try again later"
 
 // Action creators
 
@@ -109,7 +109,7 @@ export const actionFetchFilterSearch = (filterSearchType, filterSearchString, fi
         if(error) { 
             errorMsg = ""
             if (error.response) {
-                errorMsg = API_NETWORK_ERROR_MSG
+                errorMsg = Constants.API_NETWORK_ERROR_MSG
             } else if (error.request) {
                 errorMsg = error.request
             } else 
@@ -118,6 +118,13 @@ export const actionFetchFilterSearch = (filterSearchType, filterSearchString, fi
         dispatch(actionFilterSearchFailed(errorMsg))
       })
     })
+  }
+
+  export const actionDiscoverSearchChangePage = (discoverSearchPage) => {
+    return {
+        type: ActionTypes.DISCOVER_SEARCH_PAGE_CHANGED,
+        payload: discoverSearchPage
+    }
   }
 
   export const actionFetchDiscoverSearch = (filters, discoverPage) => {
@@ -148,4 +155,11 @@ export const actionFetchFilterSearch = (filterSearchType, filterSearchString, fi
         })
     }
     })
+  }
+
+  export const actionMovieSelected = (selectedMovieId) => {
+    return {
+        type: ActionTypes.MOVIE_SELECTED,
+        payload: selectedMovieId
+    }
   }

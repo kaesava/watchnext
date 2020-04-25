@@ -13,6 +13,8 @@ import {
   actionFilterSearchChangePage,
   actionFilterAdded,
   actionFilterRemoved,
+  actionDiscoverSearchChangePage,
+  actionMovieSelected,
   actionFetchDiscoverSearch,
 } from './actions';
 
@@ -36,6 +38,7 @@ class SearchComponent extends Component {
       this.refreshFilterSearch(filterSearchType, this.props.filterSearchString, this.props.filterSearchPage)
       this.refs.filterSearchTextInput.focus();
   }
+
   changeFilterPage = (filterSearchPage) => {
     if(filterSearchPage >= 1 && filterSearchPage <= MAX_NUM_PAGES) {
       this.props.filterSearchChangePage(filterSearchPage);
@@ -64,8 +67,20 @@ class SearchComponent extends Component {
     this.props.fetchFilterSearch(filterSearchType, filterSearchString, filterSearchPage)
   }
 
+  changeDiscoverPage = (discoverSearchPage) => {
+    if(discoverSearchPage >= 1 && discoverSearchPage <= MAX_NUM_PAGES) {
+      this.props.discoverSearchChangePage(discoverSearchPage);
+      this.refreshDiscoverSearch(this.props.filters, discoverSearchPage)
+    }
+  }
+
   refreshDiscoverSearch = (filters, discoverSearchPage) => {
     this.props.fetchDiscoverSearch(filters, discoverSearchPage)
+  }
+
+  loadMovieDetails = (selectedMovieTId) => {
+    this.props.movieSelected(selectedMovieTId)
+    this.props.navigation.navigate('Movie')
   }
 
   render() {
@@ -125,19 +140,19 @@ class SearchComponent extends Component {
         }
         <View style={styles.discoverPanel}>
           <View style={styles.prevNextButtons}>
-            {!this.props.filterRetrieveInProgress && this.props.filterSearchString != "" && this.props.filterSearchPage > 1 && 
-              <TouchableOpacity onPress={() => {this.changeFilterPage(this.props.filterSearchPage - 1)}}>
+            {!this.props.discoverRetrieveInProgress && this.props.discoverSearchPage > 1 && 
+              <TouchableOpacity onPress={() => {this.changeDiscoverPage(this.props.discoverSearchPage - 1)}}>
                 <Ionicons name="md-arrow-back" size={20} style={{color: '#de9595'}} />
               </TouchableOpacity>
             }
-            {!this.props.filterRetrieveInProgress && this.props.filterSearchString != "" && this.props.filterSearchPage < MAX_NUM_PAGES && 
-              <TouchableOpacity onPress={() => {this.changeFilterPage(this.props.filterSearchPage + 1)}}>
+            {!this.props.discoverRetrieveInProgress && this.props.discoverSearchPage < MAX_NUM_PAGES && 
+              <TouchableOpacity onPress={() => {this.changeDiscoverPage(this.props.discoverSearchPage + 1)}}>
                 <Ionicons name="md-arrow-forward" size={20} style={{color: '#de9595'}} />
               </TouchableOpacity>
             }
           </View>
           { this.props.filterSearchResults.length == 0 && !this.props.discoverRetrieveInProgress && this.props.discoverSearchResults.length > 0 &&
-          <DiscoverResultsPanel results={this.props.discoverSearchResults} touchAction={()=>{}} />
+          <DiscoverResultsPanel results={this.props.discoverSearchResults} touchAction={(selectedMovieId)=>{this.loadMovieDetails(selectedMovieId)}} />
           }
         </View>
       </View>
@@ -147,17 +162,17 @@ class SearchComponent extends Component {
 
 mapStateToProps = (state) => {
   return {
-    filterSearchString: state.filterSearchString,
-    filterSearchType: state.filterSearchType,
-    filterRetrieveInProgress: state.filterRetrieveInProgress,
-    filterSearchResults: state.filterSearchResults,
-    filterSearchPage: state.filterSearchPage,
-    filterSearchError: state.filterSearchError,
-    filters: state.filters,
-    discoverSearchPage: state.discoverSearchPage,
-    discoverRetrieveInProgress: state.discoverRetrieveInProgress,
-    discoverSearchResults: state.discoverSearchResults,
-    discoverSearchError: state.discoverSearchError,
+    filterSearchString: state.filterSearch.filterSearchString,
+    filterSearchType: state.filterSearch.filterSearchType,
+    filterRetrieveInProgress: state.filterSearch.filterRetrieveInProgress,
+    filterSearchResults: state.filterSearch.filterSearchResults,
+    filterSearchPage: state.filterSearch.filterSearchPage,
+    filterSearchError: state.filterSearch.filterSearchError,
+    filters: state.filterSearch.filters,
+    discoverSearchPage: state.filterSearch.discoverSearchPage,
+    discoverRetrieveInProgress: state.filterSearch.discoverRetrieveInProgress,
+    discoverSearchResults: state.filterSearch.discoverSearchResults,
+    discoverSearchError: state.filterSearch.discoverSearchError,
   }
 }
 
@@ -169,6 +184,8 @@ mapDispatchToProps = dispatch => {
     filterSearchChangePage: (filterPage) => dispatch(actionFilterSearchChangePage(filterPage)),
     filterAdded: (filterSearchResult) => dispatch(actionFilterAdded(filterSearchResult)),
     filterRemoved: (filterSearchKey) => dispatch(actionFilterRemoved(filterSearchKey)),
+    discoverSearchChangePage: (discoverPage) => dispatch(actionDiscoverSearchChangePage(discoverPage)),
+    movieSelected: (selectedMovieTId) => dispatch(actionMovieSelected(selectedMovieTId)),
     fetchDiscoverSearch: (filters, discoverPage) => dispatch(actionFetchDiscoverSearch(filters, discoverPage)),
 
   }
@@ -178,9 +195,10 @@ export default connect(mapStateToProps, mapDispatchToProps)(SearchComponent);
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     flexDirection: 'column',
-    marginTop: 50,
     alignItems: 'center',
+    justifyContent: 'center'
   },
   filtersPanel: {
     marginTop: 20,

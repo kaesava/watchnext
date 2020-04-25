@@ -27,6 +27,7 @@ router.get("/filter", (req, res, next) => {
       genre.genres.forEach((genre) => {
         if(genre.name.toLowerCase().indexOf(searchString.toLowerCase()) !== -1) {
           returnGenres.push({
+            key: Constants.FILTER_TYPE_GENRE + "." + genre.tId,
             type: Constants.FILTER_TYPE_GENRE,
             tId: genre.tId,
             name: genre.name
@@ -58,14 +59,16 @@ router.get("/filter", (req, res, next) => {
         if(!genres || !genres.lastRefreshDatetime || Math.floor(Math.abs(Date.now() - genres.lastRefreshDatetime)/86400000) > 1) {
           refreshGenresFromAPI().then((error) => {
             if(!error) {
-              genreSearch(searchString).then((result) => res.json(result), () => {res.status(400).json("Error: " + error)})
+              genreSearch(searchString).then((result) => {
+                res.json(result)
+              }, () => {res.status(400).json("Error: " + error)})
             } else {
               res.status(400).json("Error: " + error)
             }
           })
         }
         else {
-          genreSearch(searchString).then((result) => res.json(result), () => {res.status(400).json("Error: " + error)})
+          genreSearch(searchString).then((result) => res.json(result), (error) => {res.status(400).json("Error: " + error)})
         }
       }, (error) => res.status(400).json("Error: " + error))
       break; 
@@ -93,7 +96,6 @@ router.get("/discover", function(req, res, next) {
 });
 
 router.get("/:id", function(req, res, next) {
-  //if req.params.id
   Search.findOne({ movieId: { $eq: req.params.id } })
     .then(search => {
       if (search && search.movieName) {

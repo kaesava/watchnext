@@ -11,7 +11,7 @@ export default FiltersPanel = (props) => {
                     filterRemoved(selectedFilterKey);
                 }
                 return(
-                <TouchableHighlight style={styles.filterContainer} onPress={() => onClickHandler(filter.key)}>
+                <TouchableHighlight key={filter.key} style={styles.filterContainer} onPress={() => onClickHandler(filter.key)}>
                     <View style={styles.textContainer}><Text>{filter.name + "  x"}</Text></View>
                 </TouchableHighlight>)
             })

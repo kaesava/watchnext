@@ -4,6 +4,7 @@ const genreSchema = new mongoose.Schema({
     key: {type: Number, required: true},
     lastRefreshDatetime: {type: Number, required: true},
     genres: [{
+        key: {type: String, required: true},
         tId: {type: Number, required: true},
         name: {type: String, required: true}
     }]
