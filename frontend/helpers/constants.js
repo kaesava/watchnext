@@ -6,6 +6,9 @@ const Constants = {
     API_SEARCH: '/search/filter',
     API_DISCOVER: '/search/discover',
     API_MOVIE_DETAILS: "/movie/",
+    TMMDB_IMAGE_PREFIX: "http://image.tmdb.org/t/p/w92",
+    TMMDB_IMAGE_LARGE_PREFIX: "http://image.tmdb.org/t/p/w342",
+    
 }
 
 module.exports = Constants;

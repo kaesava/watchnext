@@ -195,20 +195,19 @@ export default connect(mapStateToProps, mapDispatchToProps)(SearchComponent);
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    marginTop: 120
   },
   filtersPanel: {
-    marginTop: 20,
+    marginTop: 10,
   },
   discoverPanel: {
   },
   buttonContainer: {
     flexDirection: 'row',
-    marginTop: 20,
-    marginBottom: 20,
+    marginTop: 10,
+    marginBottom: 10,
     justifyContent: 'space-around'
   },  
   prevNextButtons: {

@@ -1,0 +1,6 @@
+TODO
+
+1) Internationalise/ Locales
+2) Build a Settings to set language
+3) Build out the Movie Details page
+4) Learn more about design

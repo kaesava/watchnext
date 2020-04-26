@@ -3,6 +3,7 @@ import { StyleSheet, TextInput, View, Text, ActivityIndicator, FlatList, Touchab
 import { connect } from 'react-redux';
 
 import Constants from '../../helpers/constants';
+import MovieDetailPanel from './components/MovieDetailPanel'
 
 import {
   actionInitialise,
@@ -30,7 +31,7 @@ class MovieDetailComponent extends Component {
             <ActivityIndicator size="large" color="#00ff00" />
           }
           {this.props.errorMsg == "" && this.props.selectedMovie &&
-          <Text>{this.props.selectedMovie.title}</Text>
+          <MovieDetailPanel selectedMovie={this.props.selectedMovie} />
           }
           </View>
     )

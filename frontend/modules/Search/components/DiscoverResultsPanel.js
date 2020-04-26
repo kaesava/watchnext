@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableHighlight, FlatList, Image } from 'react-native';
 
-const TMMDB_PREFIX = "http://image.tmdb.org/t/p/w92/"
+const Constants = require("../../../helpers/constants");
 
 export default DiscoverResultsPanel = (props) => {
     const { results, touchAction } = props;
@@ -28,7 +28,7 @@ const DiscoverResult = (props) => {
             <>
             <View style={styles.imageContainer}>
             {// result.title, result.popularity, result.voteCount, result.posterPath, result.tId
-                (result.posterPath) ? <Image source={{uri: TMMDB_PREFIX + result.posterPath}}
+                (result.posterPath) ? <Image source={{uri: Constants.TMMDB_IMAGE_PREFIX + result.posterPath}}
                 style={styles.image} /> : <></>
             }
             </View>
@@ -40,8 +40,13 @@ const DiscoverResult = (props) => {
 
 const styles = StyleSheet.create({
     container: {
+        width: '80%',
         alignContent: 'center',
-        marginTop: 30
+        marginTop: 30,
+        flex: 1,
+        flexDirection: 'row',
+        margin: 5
+
     },
     resultContainer: {
         flexDirection: 'row',

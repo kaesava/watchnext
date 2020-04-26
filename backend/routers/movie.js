@@ -11,10 +11,10 @@ router.get("/:id", function(req, res, next) {
     .then(movie => {
       if (movie) {
         res.json(movie);
-        console.log("retrieving locally: " + movie.title);
+        //console.log("retrieving locally: " + movie.title);
       } else {
         try {
-          console.log("retrieving remotely");
+          //console.log("retrieving remotely");
           api.getMovieDetails(req.params.id).then(response => {
             const newMovie = new Movie(response);
             newMovie

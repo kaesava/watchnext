@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableHighlight, View, Image } from 'react-native';
 
-const TMMDB_PREFIX = "http://image.tmdb.org/t/p/w92/"
+const Constants = require("../../../helpers/constants");
 
 export default FilterSearchResult = (props) => {
     const {result, touchAction} = props;
@@ -22,7 +22,7 @@ export default FilterSearchResult = (props) => {
             <>
             <View style={styles.imageContainer}>
             {
-                (result.profilePath) ? <Image source={{uri: TMMDB_PREFIX + result.profilePath}}
+                (result.profilePath) ? <Image source={{uri: Constants.TMMDB_IMAGE_PREFIX + result.profilePath}}
                 style={styles.image} /> : <></>
             }
             </View>
